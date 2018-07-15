@@ -2,22 +2,27 @@
   <div class="hello">
 
     <form class="searchForm" v-on:submit.prevent="submitSearch">
-      <input type="text" v-model="searchQuery" placeholder="Type here" @keyup="submitSearch">
+      <input class="search-box" type="text" v-model="searchQuery" placeholder="Search hospital or person" @keyup="submitSearch">
     </form>
 
-    <div class="" v-for="item in searchResults">
-      <p>Hospital: {{item.hospitalName}}</p>
-      <p>Ward: {{item.hospitalWard}}</p>
-      <p>Play Specialist: {{item.hps}}</p>
-      <p>Play Specialist: {{item.hpsEmail}}</p>
-      <p>Phone Number: {{item.hospitalNumber}}</p>
-      <hr/>
+    <div class="results-panel">
+
+      <div class="panel-item" v-for="item in searchResults">
+        <p><strong>Hospital:</strong> {{item.hospitalName}}</p>
+        <p><strong>Ward:</strong> {{item.hospitalWard}}</p>
+        <p><strong>Play Specialist:</strong> {{item.hps}}
+          <a v-bind:href="'mailto:' + item.hpsEmail">(email)</a>
+        </p>
+        <p><strong>Phone Number:</strong> {{item.hospitalNumber}}</p>
+      </div>
+
     </div>
   </div>
 </template>
 
 
 <script>
+
 export default {
   name: 'Search',
   data () {
@@ -38,7 +43,7 @@ export default {
 
     submitSearch() {
       var results = []
-      var searchTerm = this.searchQuery.toLowerCase()
+      var searchTerm = this.searchQuery.toLowerCase();
       this.contactData.filter(function(item) {
         var hospitalName = item.hospitalName.toLowerCase().includes(searchTerm);
         var hospitalHPS = item.hps.toLowerCase().includes(searchTerm);
@@ -59,7 +64,6 @@ export default {
 
         var hospitalDetails = contact.content['$t'].split(',');
         var hps = contact.title['$t'];
-
         for (var item of hospitalDetails) {
           if (item.includes('hospitalname')) {
             var index = hospitalDetails.indexOf(item);
@@ -74,15 +78,15 @@ export default {
             var index = hospitalDetails.indexOf(item);
             var hpsEmail = hospitalDetails[index].slice(8)
           }
-          var contactItem = {
-            "hps": hps,
-            "hpsEmail": hpsEmail,
-            "hospitalName": hospitalName,
-            "hospitalWard": hospitalWard,
-            "hospitalNumber": hospitalNumber
-          }
-          this.contactData.push(contactItem);
         }
+        var contactItem = {
+          "hps": hps,
+          "hpsEmail": hpsEmail,
+          "hospitalName": hospitalName,
+          "hospitalWard": hospitalWard,
+          "hospitalNumber": hospitalNumber
+        }
+        this.contactData.push(contactItem);
       }
 
     }
@@ -95,6 +99,29 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.results-panel {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  font-size: 20px;
+  width: 220px;
+}
+
+.panel-item {
+  margin: 5px;
+  padding: 10px;
+  background-color: #F0F3FE;
+  border-radius: 10px;
+  border: 3px solid transparent;
+  text-align: left;
+}
+
+.panel-item:hover {
+  border: 3px inset #4C71F3;
+}
+
 h1, h2 {
   font-weight: normal;
 }
